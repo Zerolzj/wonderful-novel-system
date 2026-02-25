@@ -1,0 +1,19 @@
+{
+  "task_001": {
+    "id": "task_001",
+    "title": "测试任务",
+    "description": "这是一个测试任务",
+    "status": "已完成",
+    "priority": "高",
+    "progress": 100,
+    "created_at": "2026-02-25 11:33:43",
+    "updated_at": "2026-02-25 11:33:43",
+    "estimated_duration": "30分钟",
+    "actual_duration": "25分钟",
+    "next_steps": [],
+    "blockers": [],
+    "outputs": [
+      "测试产出"
+    ]
+  }
+}
