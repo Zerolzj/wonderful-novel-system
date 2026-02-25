@@ -1,0 +1,71 @@
+name: Task Status Notification
+
+on:
+  push:
+    paths:
+      - '任务状态看板.md'
+      - 'task_data.json'
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Parse task data
+        id: parse
+        run: |
+          if [ -f "task_data.json" ]; then
+            echo "current_task=$(jq -r '.current_task_id // "none"' task_data.json)" >> $GITHUB_OUTPUT
+            echo "total_tasks=$(jq 'keys | length' task_data.json)" >> $GITHUB_OUTPUT
+            echo "completed_tasks=$(jq '[.[] | select(.status == "COMPLETED")] | length' task_data.json)" >> $GITHUB_OUTPUT
+          else
+            echo "current_task=none" >> $GITHUB_OUTPUT
+            echo "total_tasks=0" >> $GITHUB_OUTPUT
+            echo "completed_tasks=0" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Generate status message
+        id: message
+        run: |
+          CURRENT_TASK="${{ steps.parse.outputs.current_task }}"
+          TOTAL="${{ steps.parse.outputs.total_tasks }}"
+          COMPLETED="${{ steps.parse.outputs.completed_tasks }}"
+          PROGRESS=$(echo "scale=1; $COMPLETED * 100 / $TOTAL" | bc -l)
+          
+          if [ "$CURRENT_TASK" != "none" ]; then
+            TASK_INFO=$(jq -r ".[\"$CURRENT_TASK\"] | \"\\(.title\\) - \\(.progress\\)%\"" task_data.json)
+            MESSAGE="🔥 当前任务: $TASK_INFO\\n📊 总体进度: $COMPLETED/$TOTAL ($PROGRESS%)\\n📱 查看详情: https://github.com/Zerolzj/wonderful-novel-system/blob/main/任务状态看板.md"
+          else
+            MESSAGE="📭 当前无任务执行\\n📊 总体进度: $COMPLETED/$TOTAL ($PROGRESS%)\\n📱 查看详情: https://github.com/Zerolzj/wonderful-novel-system/blob/main/任务状态看板.md"
+          fi
+          
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$MESSAGE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Send to Discord (if configured)
+        if: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{"content":"${{ steps.message.outputs.message }}"}' \
+               "${{ secrets.DISCORD_WEBHOOK_URL }}"
+      
+      - name: Send to Slack (if configured)
+        if: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{"text":"${{ steps.message.outputs.message }}"}' \
+               "${{ secrets.SLACK_WEBHOOK_URL }}"
+      
+      - name: Send to Telegram (if configured)
+        if: ${{ secrets.TELEGRAM_BOT_TOKEN && secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{"chat_id":"${{ secrets.TELEGRAM_CHAT_ID }}","text":"${{ steps.message.outputs.message }}"}' \
+               "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
