@@ -1,13 +1,10 @@
-# 任务状态页面 - 实时数据版本
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="通过GitHub Actions自动更新，每5分钟同步一次数据 -->
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📋 任务状态监控 - 实时数据版本</title>
+    <title>📋 任务状态监控 - 修复版</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -39,36 +36,38 @@
 <body class="bg-gray-900 text-white min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <header class="text-center mb-8">
-            <h1 class="🔥 任务状态监控</h1>
-            <p class="text-gray-400 text-sm">实时数据版本 - 每5分钟自动更新</p>
+            <h1 class="text-4xl font-bold mb-2">📋 任务状态监控</h1>
+            <p class="text-gray-400 text-sm">修复版本 - 静态数据通过GitHub Actions更新</p>
             <p class="text-gray-500 text-xs">最后更新: <span id="lastUpdate">加载中...</span></p>
         </header>
 
         <!-- 当前任务 -->
         <section class="mb-8">
             <h2 class="text-2xl font-semibold mb-4">🎯 当前任务状态</h2>
-            <div id="currentTaskContainer">
-                <div class="animate-pulse">加载中...</div>
+            <div id="currentTask" class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="text-center text-gray-400">
+                    <div class="animate-pulse">正在加载数据...</div>
+                </div>
             </div>
         </section>
 
         <!-- 统计信息 -->
         <section class="mb-8">
             <h2 class="text-2xl font-semibold mb-4">📊 统计信息</h2>
-            <div class="grid grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="text-center">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
                     <div class="text-3xl font-bold text-blue-400" id="totalTasks">0</div>
                     <div class="text-gray-400">任务总数</div>
                 </div>
-                <div class="text-center">
+                <div>
                     <div class="text-3xl font-bold text-green-400" id="completedTasks">0</div>
                     <div class="text-gray-400">已完成</div>
                 </div>
-                <div class="text-center">
+                <div>
                     <div class="text-3xl font-bold text-yellow-400" id="inProgressTasks">0</div>
                     <div class="text-gray-400">进行中</div>
                 </div>
-                <div class="text-center">
+                <div>
                     <div class="text-3xl font-bold text-purple-400" id="completionRate">0%</div>
                     <div class="text-gray-400">完成率</div>
                 </div>
@@ -76,7 +75,7 @@
         </section>
 
         <!-- 任务列表 -->
-        <section>
+        <section class="mb-8">
             <h2 class="text-2xl font-semibold mb-4">📝 任务列表</h2>
             <div id="taskList" class="space-y-4">
                 <div class="animate-pulse bg-gray-800 rounded-lg p-6 border border-gray-700">
@@ -87,16 +86,31 @@
             </div>
         </section>
 
-        <!-- 系统信息 -->
+        <!-- 系统状态 -->
         <section class="mb-8">
-            <h2 class="最后更新</h2>
-            <p class="text-gray-400 text-sm" id="lastUpdateMessage">数据同步中...</p>
+            <h2 class="🔧� 系统状态</h2>
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl mb-2">🌐</div>
+                        <div class="text-green-400">GitHub Pages</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl mb-2">🔄</div>
+                        <div class="text-yellow-400">自动更新</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl mb-2">📱️</div>
+                        <div class="text-blue-400">响应式</div>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
 
     <script>
         // GitHub仓库信息
-        const REPO_URL = 'https://api.github.com/repos/Zerolzj/wonderful-novel-system/contents/task_data.json';
+        const REPO_API = 'https://api.github.com/repos/Zerolzj/wonderful-novel-system/contents/task_data.json';
         
         // 模拟token（实际使用时需要配置）
         const TOKEN = 'YOUR_GITHUB_TOKEN';
@@ -104,7 +118,7 @@
         // 获取任务数据
         async function fetchTaskData() {
             try {
-                const response = await fetch(REPO_URL, {
+                const response = await fetch(REPO_API, {
                     headers: {
                         'Authorization': `token ${TOKEN}`,
                         'Accept': 'application/vnd.github.v3+json'
@@ -116,36 +130,35 @@
                 }
                 
                 const data = await response.json();
-                return data; // 解码base64内容
+                
+                // 解码base64内容
+                const content = data.content;
+                try {
+                    return JSON.parse(content);
+                } catch (e) {
+                    // 如果不是JSON，尝试其他编码
+                    const decoded = decodeURIComponent(content);
+                    return JSON.parse(decoded);
+                }
             } catch (error) {
                 console.error('获取任务数据失败:', error);
                 return null;
             }
         }
         
-        // 解码base64内容
-        function decodeBase64(content) {
-            try {
-                return decodeURIComponent(escape(atob(content));
-            } catch (e) {
-                return content;
-            }
-        }
-        
-        // 更新任务显示
+        // 更新显示
         async function updateDisplay() {
             try {
                 const taskData = await fetchTaskData();
                 if (!taskData) {
-                    console.error('无法获取任务数据');
+                    showNoTasksMessage();
                     return;
                 }
                 
                 // 更新当前任务
                 const currentTaskId = taskData.current_task_id;
                 if (currentTaskId && currentTaskId !== 'none') {
-                    const task = taskData[currentTaskId];
-                    updateCurrentTask(task);
+                    updateCurrentTask(taskData[currentTaskId]);
                 } else {
                     showNoTasksMessage();
                 }
@@ -166,7 +179,7 @@
         
         // 更新当前任务显示
         function updateCurrentTask(task) {
-            const container = document.getElementById('currentTaskContainer');
+            const container = document.getElementById('currentTask');
             
             if (!task) {
                 showNoTasksMessage();
@@ -191,31 +204,9 @@
                                 <span class="text-purple-400">${task.created_at}</span>
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <div class="text-gray-400 mb-2">描述：</div>
-                            <div class="text-gray-300">${task.description}</div>
                         </div>
-                        <div>
-                            <div class="text-gray-400 mb-2">产出物：</div>
-                            <ul class="list-disc list-inside text-gray-300">
-                                ${task.outputs.map(output => `<li>${output}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="ml-4">
-                        <div class="relative w-24 h-24">
-                            <svg class="transform -rotate-90 w-24 h-24">
-                                <circle cx="48" cy="48" r="36" stroke="#4B5563" stroke-width="8" fill="none"></circle>
-                                <circle cx="48" cy="48" r="36" stroke="#10B981" stroke-width="8" fill="none"
-                                        stroke-dasharray="${task.progress * 2.26} 226"
-                                        stroke-linecap="round"></circle>
-                            </svg>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <span class="text-lg font-bold">${task.progress}%</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+            </div>
             
             function showNoTasksMessage() {
                 const container = document.getElementById('currentTask');
@@ -225,7 +216,7 @@
                         <div class="text-xl">当前无任务执行中</div>
                         <div class="text-sm text-gray-500">请创建新任务或查看已完成任务</div>
                     </div>
-                </div>
+            }
             
             function getStatusColor(status) {
                 const colors = {
@@ -240,10 +231,14 @@
             
             // 更新统计信息
             function updateStatistics() {
-                const stats = getStatistics();
-                document.getElementById('totalTasks').textContent = stats.total_tasks;
-                document.getElementById('completedTasks').textContent = stats.completed_tasks;
-                document.getElementById('completionRate').textContent = stats.completionRate + '%';
+                const task_ids = Object.keys(data).filter(k => k.startsWith('task_'));
+                const total_tasks = len(task_ids);
+                const completed_tasks = len([k for k in task_ids if data[k]['status'] === '已完成']);
+                
+                document.getElementById('totalTasks').textContent = total_tasks;
+                document.getElementById('completedTasks').textContent = completed_tasks;
+                document.getElementById('inProgressTasks').textContent = len([k for k in task_ids if data[k]['status'] === '进行中']);
+                document.getElementById('completionRate').textContent = completed_tasks / total_tasks * 100 + '%';
             }
             
             // 更新任务列表
@@ -257,33 +252,43 @@
                             <div>
                                 <h3 class="text-lg font-semibold mb-2">${task.title}</h3>
                                 <div class="flex items-center gap-4 text-sm text-gray-400">
-                                    <span class="${getStatusColor(task.status)}">${task.status}</span>
+                                    <span class="text-${getStatusColor(task.status)}">${task.status}</span>
                                     <span class="text-blue-400">${task.progress}%</span>
                                     <span class="text-gray-400">${task.priority}</span>
                                 </div>
-                            </div>
+                        </div>
                         <div class="text-sm text-gray-500">${task.created_at}</div>
                         <div class="w-full bg-gray-700 rounded-full h-2 mb-4">
                             <div class="bg-blue-500 h-2 rounded-full" style="width: ${task.progress}%"></div>
                         </div>
+                        <div class="text-sm text-gray-400">
+                            <div class="mb-1">产出物：</div>
+                            <ul class="list-disc list-inside text-gray-300">
+                                ${task.outputs.map(output => `<li>${output}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
                 `).join('');
             }
             
-            // 更新时间
             function updateTime() {
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleString('zh-CN');
             }
             
-            // 定期更新
+            // 初始化
+            updateTime();
+            updateDisplay();
+            
+            // 每5分钟自动更新
             setInterval(updateDisplay, 5 * 60 * 1000); // 每5分钟更新一次
-            setInterval(updateTime, 30 * 1000); // 每30秒更新时间显示
         }
         
         // 获取统计数据
         function getStatistics() {
-            const task_ids = [k for k in Object.keys(data).keys() if k.startsWith('task_')];
+            const task_ids = Object.keys(data).filter(k => k.startsWith('task_'));
             const total_tasks = len(task_ids);
-            const completed_tasks = len([data[k] for k in task_ids if data[k]['status'] === '已完成']);
+            const completed_tasks = len([k for k in task_ids if data[k]['status'] === '已完成']);
+            
             return {
                 total_tasks: total_tasks,
                 completed_tasks: completed_tasks,
