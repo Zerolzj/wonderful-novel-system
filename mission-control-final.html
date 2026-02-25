@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Control - 实时任务监控面板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .task-card {
+            transition: all 0.3s ease;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.1);
+        }
+        .kanban-column {
+            min-height: 400px;
+        }
+        .drag-over {
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 2px dashed #3b82f6;
+        }
+        .status-badge {
+            @apply px-2 py-1 rounded-full text-xs font-medium;
+        }
+        .status-inbox { @apply bg-blue-900 text-blue-200; }
+        .status-assigned { @apply bg-yellow-900 text-yellow-200; }
+        .status-progress { @apply bg-purple-900 text-purple-200; }
+        .status-review { @apply bg-orange-900 text-orange-200; }
+        .status-done { @apply bg-green-900 text-green-200; }
+        
+        .loader {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .realtime-indicator {
+            animation: pulse 2s infinite;
+        }
+        .connection-status {
+            transition: all 0.3s ease;
+        }
+        .status-online { @apply bg-green-500; }
+        .status-offline { @apply bg-red-500; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <div id="root">
+        <div id="loading" class="min-h-screen bg-gray-900 flex items-center justify-center">
+            <div class="text-center">
+                <div class="loader mx-auto mb-4"></div>
+                <p class="text-gray-400">正在加载任务数据...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        // 本地存储键
+        const STORAGE_KEY = 'mission_control_tasks';
+        
+        // 任务数据
+        let tasks = [];
+        let selectedTask = null;
+        let draggedTask = null;
+        let lastUpdate = new Date();
+        
+        const columns = [
+            { id: 'inbox', title: '收件箱', status: 'inbox' },
+            { id: 'assigned', title: '已分配', status: 'assigned' },
+            { id: 'progress', title: '进行中', status: 'progress' },
+            { id: 'review', title: '审核中', status: 'review' },
+            { id: 'done', title: '已完成', status: 'done' }
+        ];
+
+        // 从本地存储加载任务数据
+        function loadTasksFromStorage() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    tasks = JSON.parse(stored);
+                    return true;
+                }
+            } catch (error) {
+                console.error('加载本地数据失败:', error);
+            }
+            
+            // 如果没有本地数据，使用示例数据
+            tasks = [
+                {
+                    id: 'task_1',
+                    title: '修复任务状态页面404问题',
+                    description: '用户反馈GitHub Pages页面返回404错误，需要诊断并修复',
+                    status: 'progress',
+                    priority: 'high',
+                    assignee: 'AI Assistant',
+                    progress: 75,
+                    created_at: '2026-02-25T10:00:00Z',
+                    updated_at: '2026-02-25T14:00:00Z'
+                },
+                {
+                    id: 'task_2',
+                    title: '继续写《万界神级系统》第23章',
+                    description: '推进宗门大比剧情线，林辰开始探索藏经阁地下',
+                    status: 'progress',
+                    priority: 'medium',
+                    assignee: 'AI Assistant',
+                    progress: 25,
+                    created_at: '2026-02-25T12:00:00Z',
+                    updated_at: '2026-02-25T13:30:00Z'
+                },
+                {
+                    id: 'task_3',
+                    title: '设计主动推送系统',
+                    description: '创建多平台任务状态推送系统，支持Telegram、Discord等',
+                    status: 'assigned',
+                    priority: 'medium',
+                    assignee: 'AI Assistant',
+                    progress: 50,
+                    created_at: '2026-02-25T08:00:00Z',
+                    updated_at: '2026-02-25T11:00:00Z'
+                },
+                {
+                    id: 'task_4',
+                    title: '代码审查和优化',
+                    description: '审查现有代码结构，优化性能和可维护性',
+                    status: 'done',
+                    priority: 'low',
+                    assignee: 'AI Assistant',
+                    progress: 100,
+                    created_at: '2026-02-25T06:00:00Z',
+                    updated_at: '2026-02-25T09:00:00Z'
+                }
+            ];
+            saveTasksToStorage();
+            return false;
+        }
+
+        // 保存任务数据到本地存储
+        function saveTasksToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+                lastUpdate = new Date();
+                return true;
+            } catch (error) {
+                console.error('保存数据失败:', error);
+                return false;
+            }
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'inbox': 'bg-blue-900 text-blue-200',
+                'assigned': 'bg-yellow-900 text-yellow-200',
+                'progress': 'bg-purple-900 text-purple-200',
+                'review': 'bg-orange-900 text-orange-200',
+                'done': 'bg-green-900 text-green-200'
+            };
+            return colors[status] || 'bg-gray-700 text-gray-300';
+        }
+
+        function getPriorityColor(priority) {
+            const colors = {
+                'high': 'text-red-400',
+                'medium': 'text-yellow-400',
+                'low': 'text-green-400'
+            };
+            return colors[priority] || 'text-gray-400';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('zh-CN', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getTasksForColumn(status) {
+            return tasks.filter(task => task.status === status);
+        }
+
+        function getStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(task => task.status === 'done').length;
+            const inProgress = tasks.filter(task => task.status === 'progress').length;
+            const agents = 1;
+            
+            return { total, completed, inProgress, agents };
+        }
+
+        function render() {
+            const stats = getStats();
+            
+            document.getElementById('root').innerHTML = `
+                <div class="min-h-screen bg-gray-900">
+                    <!-- Header -->
+                    <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <h1 class="text-2xl font-bold flex items-center">
+                                    <i class="fas fa-satellite-dish mr-2 text-blue-500"></i>
+                                    Mission Control
+                                    <div class="ml-3 flex items-center">
+                                        <div class="connection-status w-2 h-2 rounded-full bg-green-500"></div>
+                                        <span class="ml-2 text-xs text-gray-400">本地模式</span>
+                                    </div>
+                                </h1>
+                                <div class="flex items-center space-x-6 text-sm">
+                                    <span class="text-gray-400">任务: <span class="text-white font-medium">${stats.total}</span></span>
+                                    <span class="text-gray-400">已完成: <span class="text-green-400 font-medium">${stats.completed}</span></span>
+                                    <span class="text-gray-400">进行中: <span class="text-purple-400 font-medium">${stats.inProgress}</span></span>
+                                    <span class="text-gray-400">Agents: <span class="text-blue-400 font-medium">${stats.agents}</span></span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button onclick="addNewTask()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    新建任务
+                                </button>
+                                <button onclick="exportTasks()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
+                                    <i class="fas fa-download mr-2"></i>
+                                    导出
+                                </button>
+                                <button onclick="importTasks()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center">
+                                    <i class="fas fa-upload mr-2"></i>
+                                    导入
+                                </button>
+                                <button onclick="clearAllTasks()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center">
+                                    <i class="fas fa-trash mr-2"></i>
+                                    清空
+                                </button>
+                                <span class="text-gray-500 text-sm realtime-indicator">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    最后更新: ${lastUpdate.toLocaleTimeString('zh-CN')}
+                                </span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="flex">
+                        <!-- Kanban Board -->
+                        <div class="flex-1 p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                                ${columns.map(column => `
+                                    <div class="kanban-column bg-gray-800 rounded-lg p-4">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="font-semibold text-lg">${column.title}</h3>
+                                            <span class="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-sm">
+                                                ${getTasksForColumn(column.status).length}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="space-y-3" 
+                                             ondragover="handleDragOver(event)" 
+                                             ondragleave="handleDragLeave(event)"
+                                             ondrop="handleDrop(event, '${column.status}')">
+                                            ${getTasksForColumn(column.status).map(task => `
+                                                <div class="task-card bg-gray-800 rounded-lg p-4 border border-gray-700 cursor-move"
+                                                     draggable="true"
+                                                     ondragstart="handleDragStart('${task.id}')"
+                                                     onclick="selectTask('${task.id}')">
+                                                    <div class="flex items-start justify-between mb-2">
+                                                        <h4 class="font-medium text-white flex-1 mr-2">${task.title}</h4>
+                                                        <span class="status-badge ${getStatusColor(task.status)}">
+                                                            ${task.status}
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    <p class="text-gray-400 text-sm mb-3 line-clamp-2">
+                                                        ${task.description || '暂无描述'}
+                                                    </p>
+                                                    
+                                                    <div class="flex items-center justify-between text-xs">
+                                                        <div class="flex items-center space-x-3">
+                                                            ${task.assignee ? `
+                                                                <span class="text-gray-500">
+                                                                    <i class="fas fa-user mr-1"></i>
+                                                                    ${task.assignee}
+                                                                </span>
+                                                            ` : ''}
+                                                            ${task.priority ? `
+                                                                <span class="${getPriorityColor(task.priority)}">
+                                                                    <i class="fas fa-flag mr-1"></i>
+                                                                    ${task.priority}
+                                                                </span>
+                                                            ` : ''}
+                                                        </div>
+                                                        <span class="text-gray-500">
+                                                            ${formatDate(task.created_at || task.createdAt)}
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    ${task.progress !== undefined ? `
+                                                        <div class="mt-3">
+                                                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                                                <div class="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                                                                     style="width: ${task.progress}%"></div>
+                                                            </div>
+                                                            <span class="text-xs text-gray-500 mt-1">${task.progress}%</span>
+                                                        </div>
+                                                    ` : ''}
+                                                </div>
+                                            `).join('')}
+                                            
+                                            ${getTasksForColumn(column.status).length === 0 ? `
+                                                <div class="text-center text-gray-500 py-8">
+                                                    <i class="fas fa-inbox text-2xl mb-2"></i>
+                                                    <p>暂无任务</p>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Task Detail Panel -->
+                        ${selectedTask ? `
+                            <div class="w-96 bg-gray-800 p-6 border-l border-gray-700">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h2 class="text-xl font-semibold">任务详情</h2>
+                                    <button onclick="closeTaskDetail()" class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <div class="space-y-6">
+                                    <div>
+                                        <h3 class="text-lg font-medium mb-2">${selectedTask.title}</h3>
+                                        <span class="status-badge ${getStatusColor(selectedTask.status)}">
+                                            ${selectedTask.status}
+                                        </span>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-400 mb-2">描述</h4>
+                                        <textarea 
+                                            id="taskDescription"
+                                            class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                                            rows="4"
+                                            onchange="updateTaskDescription('${selectedTask.id}', this.value)"
+                                        >${selectedTask.description || ''}</textarea>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-400 mb-2">信息</h4>
+                                        <div class="space-y-2 text-sm">
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-400">负责人:</span>
+                                                <input type="text" 
+                                                       id="taskAssignee"
+                                                       class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white"
+                                                       value="${selectedTask.assignee || ''}"
+                                                       onchange="updateTaskField('${selectedTask.id}', 'assignee', this.value)">
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-400">优先级:</span>
+                                                <select id="taskPriority"
+                                                        class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white"
+                                                        onchange="updateTaskField('${selectedTask.id}', 'priority', this.value)">
+                                                    <option value="high" ${selectedTask.priority === 'high' ? 'selected' : ''}>高</option>
+                                                    <option value="medium" ${selectedTask.priority === 'medium' ? 'selected' : ''}>中</option>
+                                                    <option value="low" ${selectedTask.priority === 'low' ? 'selected' : ''}>低</option>
+                                                </select>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-400">进度:</span>
+                                                <input type="range" 
+                                                       min="0" max="100" 
+                                                       value="${selectedTask.progress || 0}"
+                                                       class="w-20"
+                                                       oninput="updateTaskProgress('${selectedTask.id}', this.value)">
+                                                <span id="progressValue">${selectedTask.progress || 0}%</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-400">创建时间:</span>
+                                                <span>${new Date(selectedTask.created_at || selectedTask.createdAt).toLocaleString('zh-CN')}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-400">更新时间:</span>
+                                                <span>${new Date(selectedTask.updated_at || selectedTask.updatedAt || new Date()).toLocaleString('zh-CN')}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="space-y-3">
+                                        <select onchange="updateTaskStatus('${selectedTask.id}', this.value)" 
+                                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
+                                            <option value="">更改状态</option>
+                                            ${columns.map(col => `
+                                                <option value="${col.status}" ${selectedTask.status === col.status ? 'selected' : ''}>
+                                                    ${col.title}
+                                                </option>
+                                            `).join('')}
+                                        </select>
+                                        
+                                        <button onclick="deleteTask('${selectedTask.id}')" 
+                                                class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg">
+                                            <i class="fas fa-trash mr-2"></i>
+                                            删除任务
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleDragStart(taskId) {
+            draggedTask = tasks.find(task => task.id === taskId);
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(event, newStatus) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            
+            if (draggedTask && draggedTask.status !== newStatus) {
+                updateTaskStatus(draggedTask.id, newStatus);
+            }
+            draggedTask = null;
+        }
+
+        function selectTask(taskId) {
+            selectedTask = tasks.find(task => task.id === taskId);
+            render();
+        }
+
+        function closeTaskDetail() {
+            selectedTask = null;
+            render();
+        }
+
+        function updateTaskStatus(taskId, newStatus) {
+            const task = tasks.find(task => task.id === taskId);
+            if (task && newStatus) {
+                task.status = newStatus;
+                task.updated_at = new Date().toISOString();
+                if (newStatus === 'done') {
+                    task.progress = 100;
+                }
+                saveTasksToStorage();
+                render();
+            }
+        }
+
+        function updateTaskField(taskId, field, value) {
+            const task = tasks.find(task => task.id === taskId);
+            if (task) {
+                task[field] = value;
+                task.updated_at = new Date().toISOString();
+                saveTasksToStorage();
+            }
+        }
+
+        function updateTaskDescription(taskId, value) {
+            updateTaskField(taskId, 'description', value);
+        }
+
+        function updateTaskProgress(taskId, value) {
+            const task = tasks.find(task => task.id === taskId);
+            if (task) {
+                task.progress = parseInt(value);
+                task.updated_at = new Date().toISOString();
+                document.getElementById('progressValue').textContent = value + '%';
+                saveTasksToStorage();
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('确定要删除这个任务吗？')) {
+                tasks = tasks.filter(task => task.id !== taskId);
+                if (selectedTask && selectedTask.id === taskId) {
+                    selectedTask = null;
+                }
+                saveTasksToStorage();
+                render();
+            }
+        }
+
+        function addNewTask() {
+            const title = prompt('请输入任务标题:');
+            if (title) {
+                const description = prompt('请输入任务描述:') || '';
+                const priority = prompt('请输入优先级 (high/medium/low):') || 'medium';
+                
+                const newTask = {
+                    id: `task_${Date.now()}`,
+                    title: title,
+                    description: description,
+                    status: 'inbox',
+                    priority: priority,
+                    assignee: 'AI Assistant',
+                    progress: 0,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+                tasks.push(newTask);
+                saveTasksToStorage();
+                render();
+            }
+        }
+
+        function exportTasks() {
+            const dataStr = JSON.stringify(tasks, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `mission-control-tasks-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importTasks() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            const importedTasks = JSON.parse(event.target.result);
+                            if (Array.isArray(importedTasks)) {
+                                tasks = importedTasks;
+                                saveTasksToStorage();
+                                render();
+                                alert('导入成功！');
+                            } else {
+                                alert('无效的任务数据格式');
+                            }
+                        } catch (error) {
+                            alert('导入失败：' + error.message);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function clearAllTasks() {
+            if (confirm('确定要清空所有任务吗？此操作不可恢复！')) {
+                tasks = [];
+                selectedTask = null;
+                saveTasksToStorage();
+                render();
+            }
+        }
+
+        // 初始化应用
+        function init() {
+            loadTasksFromStorage();
+            render();
+            
+            // 每30秒自动保存
+            setInterval(() => {
+                saveTasksToStorage();
+            }, 30000);
+        }
+
+        // 启动应用
+        init();
+    </script>
+</body>
+</html>
