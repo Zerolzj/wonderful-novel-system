@@ -222,7 +222,7 @@ class TaskBoardManager:
             content += f"""
 ### 🔥 正在执行：{current_task.title}
 
-**状态**: {current_task.status.value} | **进度**: {current_task.progress}% | **优先级**: {current_task.priority.value}
+**状态**: {current_task.status.value if hasattr(current_task.status, 'value') else current_task.status} | **进度**: {current_task.progress}% | **优先级**: {current_task.priority.value if hasattr(current_task.priority, 'value') else current_task.priority}
 **开始时间**: {current_task.created_at}
 **预计耗时**: {current_task.estimated_duration}
 
@@ -271,7 +271,7 @@ class TaskBoardManager:
                         "高": "🟠", 
                         "中": "🟡",
                         "低": "🟢"
-                    }.get(task.priority.value, "⚪")
+                    }.get(task.priority.value if hasattr(task.priority, 'value') else task.priority, "⚪")
                     
                     content += f"{priority_emoji} **{task.title}** - {task.progress}%\n"
                     content += f"   - ID: {task.id}\n"
