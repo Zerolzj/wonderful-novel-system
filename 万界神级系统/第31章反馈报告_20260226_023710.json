@@ -1,0 +1,221 @@
+{
+  "report": {
+    "chapter": 31,
+    "total_feedback": 8,
+    "sentiment_analysis": {
+      "positive": {
+        "count": 2,
+        "percentage": 25.0
+      },
+      "negative": {
+        "count": 1,
+        "percentage": 12.5
+      },
+      "neutral": {
+        "count": 5,
+        "percentage": 62.5
+      }
+    },
+    "category_distribution": {
+      "plot": {
+        "count": 2,
+        "percentage": 25.0
+      },
+      "setting": {
+        "count": 4,
+        "percentage": 50.0
+      },
+      "character": {
+        "count": 1,
+        "percentage": 12.5
+      },
+      "technical": {
+        "count": 1,
+        "percentage": 12.5
+      },
+      "pacing": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "writing": {
+        "count": 0,
+        "percentage": 0.0
+      }
+    },
+    "top_keywords": [
+      [
+        "新世界",
+        3
+      ],
+      [
+        "魔法编程",
+        3
+      ],
+      [
+        "编程",
+        3
+      ],
+      [
+        "设定",
+        2
+      ],
+      [
+        "发展",
+        2
+      ],
+      [
+        "cast",
+        1
+      ],
+      [
+        "林辰",
+        1
+      ],
+      [
+        "角色",
+        1
+      ],
+      [
+        "代码修仙",
+        1
+      ],
+      [
+        "代码",
+        1
+      ]
+    ],
+    "engagement_metrics": {
+      "total_likes": 83,
+      "total_replies": 31,
+      "average_likes": 10.38,
+      "average_replies": 3.88
+    },
+    "report_time": "2026-02-26T02:37:10.654991"
+  },
+  "suggestions": [
+    "整体反馈良好，继续保持当前创作方向"
+  ],
+  "feedback_entries": [
+    {
+      "id": "起点中文网_1772044630_0",
+      "content": "第31章的新世界设定很有意思，魔法编程的概念很新颖！",
+      "author": "程序员小王",
+      "platform": "起点中文网",
+      "sentiment": "positive",
+      "category": "setting",
+      "keywords": [
+        "设定",
+        "新世界",
+        "魔法编程",
+        "编程"
+      ],
+      "likes": 15,
+      "replies": 3,
+      "timestamp": "2026-02-26T02:37:10.654663"
+    },
+    {
+      "id": "纵横中文网_1772044630_1",
+      "content": "cast fireball()的例子太形象了，瞬间就理解了魔法编程的概念",
+      "author": "代码修仙爱好者",
+      "platform": "纵横中文网",
+      "sentiment": "neutral",
+      "category": "technical",
+      "keywords": [
+        "魔法编程",
+        "编程",
+        "cast"
+      ],
+      "likes": 12,
+      "replies": 2,
+      "timestamp": "2026-02-26T02:37:10.654703"
+    },
+    {
+      "id": "17K小说网_1772044630_2",
+      "content": "七个世界的设定有点多，担心后面会记不住",
+      "author": "谨慎读者",
+      "platform": "17K小说网",
+      "sentiment": "neutral",
+      "category": "setting",
+      "keywords": [
+        "设定"
+      ],
+      "likes": 5,
+      "replies": 8,
+      "timestamp": "2026-02-26T02:37:10.654724"
+    },
+    {
+      "id": "起点中文网_1772044630_3",
+      "content": "传送的逻辑有点问题，能量来源没说清楚",
+      "author": "逻辑控",
+      "platform": "起点中文网",
+      "sentiment": "negative",
+      "category": "plot",
+      "keywords": [],
+      "likes": 2,
+      "replies": 5,
+      "timestamp": "2026-02-26T02:37:10.654739"
+    },
+    {
+      "id": "起点中文网_1772044630_4",
+      "content": "终于等到新世界了！期待后续的发展",
+      "author": "忠实读者",
+      "platform": "起点中文网",
+      "sentiment": "positive",
+      "category": "plot",
+      "keywords": [
+        "发展",
+        "新世界",
+        "发展"
+      ],
+      "likes": 20,
+      "replies": 4,
+      "timestamp": "2026-02-26T02:37:10.654755"
+    },
+    {
+      "id": "知乎_1772044630_5",
+      "content": "林辰的程序员思维在新世界里应该会有很大优势",
+      "author": "技术宅",
+      "platform": "知乎",
+      "sentiment": "neutral",
+      "category": "setting",
+      "keywords": [
+        "新世界",
+        "林辰"
+      ],
+      "likes": 8,
+      "replies": 1,
+      "timestamp": "2026-02-26T02:37:10.654772"
+    },
+    {
+      "id": "贴吧_1772044630_6",
+      "content": "新角色艾德有点模板化，希望能有更多深度",
+      "author": "角色控",
+      "platform": "贴吧",
+      "sentiment": "neutral",
+      "category": "character",
+      "keywords": [
+        "角色"
+      ],
+      "likes": 3,
+      "replies": 6,
+      "timestamp": "2026-02-26T02:37:10.654786"
+    },
+    {
+      "id": "起点中文网_1772044630_7",
+      "content": "代码修仙到魔法编程的转换很自然，逻辑通顺",
+      "author": "理性分析者",
+      "platform": "起点中文网",
+      "sentiment": "neutral",
+      "category": "setting",
+      "keywords": [
+        "魔法编程",
+        "代码修仙",
+        "代码",
+        "编程"
+      ],
+      "likes": 18,
+      "replies": 2,
+      "timestamp": "2026-02-26T02:37:10.654801"
+    }
+  ]
+}

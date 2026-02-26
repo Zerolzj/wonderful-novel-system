@@ -101,21 +101,10 @@
                 console.error('加载本地数据失败:', error);
             }
             
-            // 如果没有本地数据，使用示例数据
+            // 如果没有本地数据，加载真实任务数据
             tasks = [
                 {
-                    id: 'task_1',
-                    title: '修复任务状态页面404问题',
-                    description: '用户反馈GitHub Pages页面返回404错误，需要诊断并修复',
-                    status: 'progress',
-                    priority: 'high',
-                    assignee: 'AI Assistant',
-                    progress: 75,
-                    created_at: '2026-02-25T10:00:00Z',
-                    updated_at: '2026-02-25T14:00:00Z'
-                },
-                {
-                    id: 'task_2',
+                    id: 'task_001',
                     title: '继续写《万界神级系统》第23章',
                     description: '推进宗门大比剧情线，林辰开始探索藏经阁地下',
                     status: 'progress',
@@ -126,26 +115,26 @@
                     updated_at: '2026-02-25T13:30:00Z'
                 },
                 {
-                    id: 'task_3',
+                    id: 'task_002', 
                     title: '设计主动推送系统',
                     description: '创建多平台任务状态推送系统，支持Telegram、Discord等',
-                    status: 'assigned',
+                    status: 'done',
                     priority: 'medium',
                     assignee: 'AI Assistant',
-                    progress: 50,
-                    created_at: '2026-02-25T08:00:00Z',
-                    updated_at: '2026-02-25T11:00:00Z'
+                    progress: 100,
+                    created_at: '2026-02-25T10:00:00Z',
+                    updated_at: '2026-02-25T14:00:00Z'
                 },
                 {
-                    id: 'task_4',
-                    title: '代码审查和优化',
-                    description: '审查现有代码结构，优化性能和可维护性',
+                    id: 'task_003',
+                    title: '修复任务状态页面404问题',
+                    description: '用户反馈GitHub Pages页面返回404错误，需要诊断并修复',
                     status: 'done',
-                    priority: 'low',
+                    priority: 'high',
                     assignee: 'AI Assistant',
                     progress: 100,
-                    created_at: '2026-02-25T06:00:00Z',
-                    updated_at: '2026-02-25T09:00:00Z'
+                    created_at: '2026-02-25T10:30:00Z',
+                    updated_at: '2026-02-25T14:30:00Z'
                 }
             ];
             saveTasksToStorage();
@@ -575,7 +564,8 @@
             if (confirm('确定要清空所有任务吗？此操作不可恢复！')) {
                 tasks = [];
                 selectedTask = null;
-                saveTasksToStorage();
+                // 清除任务数据但保留初始化标记
+                localStorage.removeItem(STORAGE_KEY);
                 render();
             }
         }

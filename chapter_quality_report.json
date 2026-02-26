@@ -1,0 +1,415 @@
+{
+  "check_time": "2026-02-26T02:01:50.380956",
+  "total_chapters": 31,
+  "qualified_chapters": 0,
+  "qualification_rate": 0,
+  "results": [
+    {
+      "chapter": "第10章-系统升级",
+      "word_count": 2261,
+      "code_count": 24,
+      "cultivation_count": 44,
+      "growth_count": 9,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2261字)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第11章-危机降临",
+      "word_count": 2057,
+      "code_count": 3,
+      "cultivation_count": 63,
+      "growth_count": 0,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2057字)",
+        "代码元素不足(3处)",
+        "成长元素不足(0处)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第12章-绝地反击",
+      "word_count": 1701,
+      "code_count": 4,
+      "cultivation_count": 34,
+      "growth_count": 10,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1701字)",
+        "代码元素不足(4处)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第13章-藏经阁二楼",
+      "word_count": 1771,
+      "code_count": 23,
+      "cultivation_count": 71,
+      "growth_count": 12,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1771字)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第14章-团队建设",
+      "word_count": 1758,
+      "code_count": 5,
+      "cultivation_count": 23,
+      "growth_count": 8,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1758字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第15章-外门大比开始",
+      "word_count": 1582,
+      "code_count": 0,
+      "cultivation_count": 12,
+      "growth_count": 3,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1582字)",
+        "代码元素不足(0处)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第16章-激烈对决",
+      "word_count": 1602,
+      "code_count": 1,
+      "cultivation_count": 12,
+      "growth_count": 5,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1602字)",
+        "代码元素不足(1处)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第17章-意外的挑战者",
+      "word_count": 1655,
+      "code_count": 7,
+      "cultivation_count": 17,
+      "growth_count": 6,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1655字)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第18章-宗主的召见",
+      "word_count": 1789,
+      "code_count": 0,
+      "cultivation_count": 66,
+      "growth_count": 6,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1789字)",
+        "代码元素不足(0处)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第19章-最后的考验",
+      "word_count": 1428,
+      "code_count": 0,
+      "cultivation_count": 20,
+      "growth_count": 3,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1428字)",
+        "代码元素不足(0处)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第1章-系统觉醒",
+      "word_count": 1970,
+      "code_count": 47,
+      "cultivation_count": 32,
+      "growth_count": 10,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1970字)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第20章-新的挑战",
+      "word_count": 1530,
+      "code_count": 3,
+      "cultivation_count": 69,
+      "growth_count": 3,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1530字)",
+        "代码元素不足(3处)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第21章-太初剑诀",
+      "word_count": 2925,
+      "code_count": 16,
+      "cultivation_count": 52,
+      "growth_count": 19,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2925字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第22章-内门试炼",
+      "word_count": 2280,
+      "code_count": 17,
+      "cultivation_count": 57,
+      "growth_count": 7,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2280字)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第23章-神级炼丹术",
+      "word_count": 3307,
+      "code_count": 32,
+      "cultivation_count": 122,
+      "growth_count": 7,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第24章-宗门大选开幕",
+      "word_count": 3314,
+      "code_count": 29,
+      "cultivation_count": 72,
+      "growth_count": 18,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第25章-代码解析考验",
+      "word_count": 2999,
+      "code_count": 75,
+      "cultivation_count": 101,
+      "growth_count": 5,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2999字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第26章-巅峰团队战",
+      "word_count": 2971,
+      "code_count": 23,
+      "cultivation_count": 44,
+      "growth_count": 5,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2971字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第27章-宗门对决",
+      "word_count": 3029,
+      "code_count": 31,
+      "cultivation_count": 64,
+      "growth_count": 4,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第28章-天道传承",
+      "word_count": 2660,
+      "code_count": 72,
+      "cultivation_count": 41,
+      "growth_count": 11,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2660字)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第29章-神秘敌人",
+      "word_count": 3678,
+      "code_count": 34,
+      "cultivation_count": 85,
+      "growth_count": 22,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第2章-代码修仙",
+      "word_count": 2295,
+      "code_count": 35,
+      "cultivation_count": 40,
+      "growth_count": 14,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2295字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第30章-终极对决",
+      "word_count": 2598,
+      "code_count": 33,
+      "cultivation_count": 39,
+      "growth_count": 12,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2598字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第31章-新世界之门",
+      "word_count": 2038,
+      "code_count": 49,
+      "cultivation_count": 28,
+      "growth_count": 4,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2038字)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第3章-藏经阁的秘密",
+      "word_count": 2702,
+      "code_count": 31,
+      "cultivation_count": 66,
+      "growth_count": 12,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2702字)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第4章-初次交锋",
+      "word_count": 2342,
+      "code_count": 27,
+      "cultivation_count": 31,
+      "growth_count": 18,
+      "exciting_count": 1,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2342字)",
+        "爽点不足(1处)"
+      ]
+    },
+    {
+      "chapter": "第5章-外门管事的关注",
+      "word_count": 2721,
+      "code_count": 11,
+      "cultivation_count": 61,
+      "growth_count": 12,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2721字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第6章-功法融合",
+      "word_count": 2168,
+      "code_count": 19,
+      "cultivation_count": 54,
+      "growth_count": 13,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2168字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第7章-月度考核",
+      "word_count": 1990,
+      "code_count": 9,
+      "cultivation_count": 31,
+      "growth_count": 9,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1990字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第8章-苏晴雨的请教",
+      "word_count": 1946,
+      "code_count": 10,
+      "cultivation_count": 53,
+      "growth_count": 11,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(1946字)",
+        "爽点不足(0处)"
+      ]
+    },
+    {
+      "chapter": "第9章-暗中调查",
+      "word_count": 2526,
+      "code_count": 16,
+      "cultivation_count": 36,
+      "growth_count": 6,
+      "exciting_count": 0,
+      "is_qualified": false,
+      "issues": [
+        "字数不足(2526字)",
+        "爽点不足(0处)"
+      ]
+    }
+  ]
+}
